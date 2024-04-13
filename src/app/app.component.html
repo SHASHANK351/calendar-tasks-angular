@@ -1,0 +1,65 @@
+<div class="viewSection">
+  <div class="flex slide">
+    <button class="today" (click)="goToday()">Today</button>
+    <button class="prev" (click)="goSlide('back')">
+      <span class="material-icons">chevron_left</span>
+    </button>
+    <button class="next" (click)="goSlide('next')">
+      <span class="material-icons">chevron_right</span>
+    </button>
+    <span>{{ getDateText() }}</span>
+  </div>
+  <div class="flex">
+    <div class="view">
+      <button
+        class="month"
+        [ngClass]="view === 'month' ? 'active' : ''"
+        (click)="viewChange('month')"
+      >
+        Month
+      </button>
+      <button
+        class="week"
+        [ngClass]="view === 'week' ? 'active' : ''"
+        (click)="viewChange('week')"
+      >
+        Week
+      </button>
+    </div>
+  </div>
+</div>
+<calendar
+  [data]="data"
+  [taskTypeProps]="taskTypeProps"
+  [limit]="limit"
+  [dayStart]="1"
+  [slide]="slide.asObservable()"
+  [today]="today.asObservable()"
+  [layerTrigger]="layerTrigger.asObservable()"
+  [view]="view"
+  [dayStyle]="dayStyle"
+  [otherMonthStyle]="otherMonthStyle"
+  [currMonthStyle]="currMonthStyle"
+  taskTypeKey="type"
+  valueToSave="id"
+  popUpClose="closeLayer"
+  (datesChange)="getData($event)"
+>
+  <ng-container *ngFor="let prop of taskTypeProps">
+    <ng-template [calendarProjection]="prop" #ll let-data>
+      <div class="{{ prop }} section">
+        <span class="label name">{{ data.value.name }}</span>
+      </div>
+    </ng-template>
+    <ng-template [calendarProjection]="prop + 'More'" #pp let-data>
+      <div (click)="clicked($event, data)" class="section">
+        <span class="label">{{ data.day[prop].length - limit }} more</span>
+      </div>
+    </ng-template>
+  </ng-container>
+  <ng-template [calendarProjection]="'more'" #pp let-data>
+    <div (click)="clicked($event, data)" class="section">
+      <span class="label">{{ "MORE DATA" | titlecase }}</span>
+    </div>
+  </ng-template>
+</calendar>

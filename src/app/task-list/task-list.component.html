@@ -1,0 +1,32 @@
+<div class="day">
+  <div class="dateContainer">
+    <div *ngIf="date">
+      {{
+        date.getDate() +
+          " " +
+          months[date.getMonth()].toUpperCase() +
+          ", " +
+          date.getFullYear()
+      }}
+    </div>
+    <mat-icon (click)="close()">close</mat-icon>
+  </div>
+  <ng-container *ngIf="day">
+    <ng-container *ngFor="let prop of props">
+      <ng-container *ngIf="day[prop] && day[prop].length">
+        <div class="propLabel">
+          {{ labels[prop] | titlecase }}
+        </div>
+        <div class="tasks">
+          <ng-container *ngFor="let task of day[prop]">
+            <div class="task {{ prop }}">
+              <span *ngIf="prop === 'open' || prop === 'closed'"> </span>
+              <span class="name {{ prop }}">{{ task.name }}</span>
+              <span *ngIf="task.pinned"></span>
+            </div>
+          </ng-container>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</div>

@@ -1,0 +1,149 @@
+<span class="date" [style.marginLeft.px]="dataViewMargin">
+  <span>{{ date?.getDate() }}</span>
+</span>
+<ng-container *ngIf="day">
+  <div
+    *ngIf="taskTypeProps?.length"
+    class="taskSection"
+    [style.marginBottom.px]="dataViewMargin"
+    [ngStyle]="{ height: getSectionTotal() + 'px' }"
+  >
+    <ng-container *ngFor="let prop of taskTypeProps">
+      <ng-container
+        *ngFor="let task of $any(day[prop] | slice : 0 : limit); let i = index"
+      >
+        <div
+          class="task"
+          [ngClass]="prop"
+          [style.height.px]="dataViewHeight"
+          [style.margin.px]="dataViewMargin"
+          [style.width]="
+            sanitizer.bypassSecurityTrustStyle(
+              'calc(100% - ' + 2 * dataViewMargin + 'px)'
+            )
+          "
+          [ngStyle]="{
+            top:
+              sectionTop[day[prop][i][valueToSave]] *
+                (dataViewHeight + dataViewMargin) +
+              'px'
+          }"
+        >
+          <ng-container *ngFor="let template of templates">
+            <ng-container *ngIf="template.calendarProjection === prop">
+              <ng-container
+                *ngTemplateOutlet="
+                  template.projectionTemplate;
+                  context: { $implicit: { date: date, day: day, value: task } }
+                "
+              ></ng-container>
+            </ng-container>
+          </ng-container>
+        </div>
+        <ng-container *ngIf="commonTask(task)">
+          <div
+            class="task common"
+            [ngClass]="prop"
+            [style.height.px]="dataViewHeight"
+            [style.margin.px]="dataViewMargin"
+            [ngStyle]="sectionStyle[day[prop][i][valueToSave]]"
+          >
+            <ng-container *ngFor="let template of templates">
+              <ng-container *ngIf="template.calendarProjection === prop">
+                <ng-container
+                  *ngTemplateOutlet="
+                    template.projectionTemplate;
+                    context: {
+                      $implicit: { date: date, day: day, value: task }
+                    }
+                  "
+                ></ng-container>
+              </ng-container>
+            </ng-container>
+          </div>
+        </ng-container>
+      </ng-container>
+      <div
+        *ngIf="multiLimitView && day[prop]?.length > limit"
+        class="task more"
+        [style.height.px]="dataViewHeight"
+        [style.margin.px]="dataViewMargin"
+        [style.width]="
+          sanitizer.bypassSecurityTrustStyle(
+            'calc(100% - ' + 2 * dataViewMargin + 'px)'
+          )
+        "
+        [ngStyle]="{
+          top:
+            (sectionTop[day[prop][limit - 1][valueToSave]] + 1) *
+              (dataViewHeight + dataViewMargin) +
+            'px'
+        }"
+      >
+        <ng-container *ngFor="let template of templates">
+          <ng-container *ngIf="template.calendarProjection === prop + 'More'">
+            <ng-container
+              *ngTemplateOutlet="
+                template.projectionTemplate;
+                context: {
+                  $implicit: { date: date, day: day, value: null }
+                }
+              "
+            ></ng-container>
+          </ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+    <div
+      *ngIf="!multiLimitView && isMore()"
+      class="task more"
+      [style.height.px]="dataViewHeight"
+      [style.margin.px]="dataViewMargin"
+      [style.width]="
+        sanitizer.bypassSecurityTrustStyle(
+          'calc(100% - ' + 2 * dataViewMargin + 'px)'
+        )
+      "
+      [ngStyle]="{
+        top: getMoreTop() + 'px'
+      }"
+    >
+      <ng-container *ngFor="let template of templates">
+        <ng-container *ngIf="template.calendarProjection === 'more'">
+          <ng-container
+            *ngTemplateOutlet="
+              template.projectionTemplate;
+              context: {
+                $implicit: { date: date, day: multiLimitDay, value: null }
+              }
+            "
+          ></ng-container>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngFor="let prop of dayProps">
+  <ng-container *ngFor="let template of templates">
+    <ng-container *ngIf="template.calendarProjection === prop">
+      <ng-container
+        *ngTemplateOutlet="
+          template.projectionTemplate;
+          context: {
+            $implicit: { date: date, day: multiLimitDay, value: null }
+          }
+        "
+      ></ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>
+<ng-container *ngFor="let template of templates">
+  <ng-container *ngIf="template.calendarProjection === ''">
+    <ng-container
+      *ngTemplateOutlet="
+        template.projectionTemplate;
+        context: { $implicit: { date: date, day: multiLimitDay, value: null } }
+      "
+    ></ng-container>
+  </ng-container>
+</ng-container>

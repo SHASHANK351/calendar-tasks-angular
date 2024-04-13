@@ -1,0 +1,60 @@
+<div class="days" [ngStyle]="dayStyle">
+  <div *ngFor="let day of days">{{ day }}</div>
+</div>
+<div class="calendar" #calendar>
+  <div
+    *ngIf="displayPopUp && overlay"
+    class="calendarOverlay"
+    [ngStyle]="overlay.style"
+    (click)="overlayClick()"
+  ></div>
+  <div *ngIf="displayPopUp" class="layerPopUp" [ngStyle]="layerStyle">
+    <ng-template appComponentHost></ng-template>
+  </div>
+  <div
+    *ngFor="let week of tempWeeks; let weekIdx = index"
+    class="weekSection"
+    #weeksRef
+  >
+    <calendar-day
+      *ngFor="let day of week; let dayIdx = index"
+      class="daySection"
+      (click)="
+        dayClick(
+          $event,
+          getDate(weekIdx, dayIdx),
+          weeks[weekIdx] ? weeks[weekIdx][dayIdx] : weeks[weekIdx]
+        )
+      "
+      [ngClass]="{
+        otherMonth: curr.getMonth() !== getDate(weekIdx, dayIdx).getMonth()
+      }"
+      [ngStyle]="
+        curr.getMonth() !== getDate(weekIdx, dayIdx).getMonth()
+          ? otherMonthStyle
+          : currMonthStyle
+      "
+      [day]="weeks[weekIdx] ? weeks[weekIdx][dayIdx] : weeks[weekIdx]"
+      [dayIdx]="dayIdx"
+      [sectionTop]="sectionTop[weekIdx]"
+      [sectionStyle]="sectionStyle[weekIdx]"
+      [compareDates]="compareDates"
+      [date]="getDate(weekIdx, dayIdx)"
+      [taskTypeProps]="taskTypeProps"
+      [dayProps]="dayProps"
+      [templates]="templates ? templates.toArray() : []"
+      [limit]="limit"
+      [valueToSave]="valueToSave"
+      viewStart="viewStart"
+      [dataViewHeight]="dataViewHeight"
+      [dataViewMargin]="dataViewMargin"
+      [multiLimitView]="multiLimitView"
+      [multiLimitDay]="
+        multiLimitData[weekIdx]
+          ? multiLimitData[weekIdx][dayIdx]
+          : multiLimitData[weekIdx]
+      "
+    >
+    </calendar-day>
+  </div>
+</div>
